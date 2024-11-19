@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.gson)
     implementation(libs.hivemq.mqtt.client)
     implementation (libs.play.services.location)
     implementation(libs.androidx.core.ktx)

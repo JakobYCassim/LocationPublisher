@@ -23,9 +23,11 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.gson.Gson
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client
 import org.json.JSONObject
+
 
 
 class MainActivity : AppCompatActivity()  {
@@ -135,13 +137,17 @@ class MainActivity : AppCompatActivity()  {
     }
 
     private fun createMessage(location: Location): String {
-        val jsonMessage = JSONObject()
-        jsonMessage.put("student_id", studentIdText.text.toString())
-        jsonMessage.put("latitude", location.latitude)
-        jsonMessage.put("longitude", location.longitude)
-        jsonMessage.put("timestamp", System.currentTimeMillis())
 
-        return jsonMessage.toString()
+        val message = LocationMessage(
+            studentIdText.text.toString(),
+            location.latitude,
+            location.longitude,
+            System.currentTimeMillis()
+        )
+
+        return Gson().toJson(message)
+
+
     }
 
     @Suppress("UNUSED_PARAMETER")
