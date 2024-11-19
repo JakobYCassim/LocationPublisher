@@ -25,6 +25,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client
+import org.json.JSONObject
 
 
 class MainActivity : AppCompatActivity()  {
@@ -117,15 +118,11 @@ class MainActivity : AppCompatActivity()  {
     private fun publishLocation(location: Location) {
         if (isConnected) {
             val topic = "assignment/location"
-            val timestamp = System.currentTimeMillis()
-            val messageContent = """
-                Latitude: ${location.latitude},
-                Longitude: ${location.longitude},
-                Timestamp: $timestamp
-            """.trimIndent()
+            val messageContent = createMessage(location)
+
             locationTextView.text = messageContent
             try {
-                client?.publishWith()?.topic(topic)?.payload(messageContent.toByteArray())?.send()
+                client?.publishWith()?.topic(topic)?.payload(messageContent.toByteArray(Charsets.UTF_8))?.send()
                 Log.d("CLIENT", "Published Location to broker")
             } catch (e: Exception) {
                 Toast.makeText(
@@ -135,6 +132,16 @@ class MainActivity : AppCompatActivity()  {
                 ).show()
             }
         }
+    }
+
+    private fun createMessage(location: Location): String {
+        val jsonMessage = JSONObject()
+        jsonMessage.put("student_id", studentIdText.text.toString())
+        jsonMessage.put("latitude", location.latitude)
+        jsonMessage.put("longitude", location.longitude)
+        jsonMessage.put("timestamp", System.currentTimeMillis())
+
+        return jsonMessage.toString()
     }
 
     @Suppress("UNUSED_PARAMETER")
